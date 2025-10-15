@@ -1,0 +1,31 @@
+
+
+f = find(respEsti.respAngles>180);
+results = respEsti.respAngles;
+results(f) = results(f)-360*ones(1,length(f));
+f0 = find(results>90);
+results(f0) = NaN;
+
+angles = [2 358 ;4 356 ;8 352];
+
+figure;
+for i = 1:size(angles,1)
+    f1 = find(angles(i,1));
+    f2 = find(angles(i,2));
+    
+    subplot(3,i)
+    hist(results(f1),50);
+    h = findobj(gca,'Type','patch');
+    set(h,'FaceColor','r','EdgeColor','w')
+    hold on;
+    hist(results(f2),50); hold on;
+    
+    means(i,1) = mean(results(f1))
+    mean(results(f2))
+    
+    corr1 = (sum(results(f1)>0))/length(f1)
+    corr2 = (sum(results(f2)<0))/length(f2)
+end
+
+
+

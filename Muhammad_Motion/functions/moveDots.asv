@@ -1,0 +1,18 @@
+function moveDots(startclut,allPosPix, wPtr)
+global params; 
+Screen('BlendFunction', wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+for frame=1:params.stim.durInFrames      
+    allDots = [allPosPix.x(:,frame), allPosPix.y(:,frame)]';
+    allDots = allDots-repmat(params.screenVar.centerPix', 1, length(allDots));
+    Screen('DrawDots', wPtr, allDots, params.dots.sizeInPix, params.dots.color, params.screenVar.centerPix,1);
+    if params.oval.present, Screen('FillOval', wPtr, params.oval.color, params.oval.rectPix); end;
+    if params.oval.fixation, fixation(wPtr); end; 
+    Screen('FillRect', params.screenVar.rectPix, [0 0 0 0]);
+    Screen('FillOval', params.screenVar.rectPix, [0 0 0 0]);
+    Screen('DrawingFinished',wPtr,0);
+    Screen('Flip', wPtr,0,0); 
+end 
+Screen('Flip', wPtr,0,0);
+
+
+

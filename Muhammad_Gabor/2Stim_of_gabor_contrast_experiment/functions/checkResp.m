@@ -1,0 +1,30 @@
+function correctTrial = checkResp(resp, trialAngle1, trialAngle2, targetLocation)
+global params;
+correctTrial = NaN;
+
+% if targetLocation ==1
+%     targetAngle = trialAngle1;
+% elseif targetLocation ==2
+%     targetAngle = trialAngle2;
+% end
+% 
+% angleIdx = find(targetAngle == params.gabor.possibleAngels);
+% up_downCorrect = params.gabor.cw_ccw(angleIdx);
+% 
+% respIdx = find(resp.key == params.responseVar.allowedRespKeysCodes);
+% up_downAns = params.responseVar.cw_ccw(respIdx);
+% 
+% if up_downCorrect == up_downAns
+%     correctTrial = 1;
+% else
+%     correctTrial = 0;
+% end
+
+respIdx = find(resp.key == params.responseVar.allowedRespKeysCodes);
+up_downAns = params.responseVar.cw_ccw(respIdx);
+
+if targetLocation == up_downAns
+    correctTrial = 1;
+else
+    correctTrial = 0;
+end

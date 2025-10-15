@@ -1,0 +1,22 @@
+function moveDots_inSquare(startclut,allPosPix, wPtr)
+global params; 
+Screen('BlendFunction', wPtr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+for frame=1:params.stim.durInFrames      
+    allDots = [allPosPix.x(:,frame), allPosPix.y(:,frame)]';
+    f = find(sqrt((allDots(:,frame).^2+allDots(:,frame).^2))>params.stim.radiusPix);
+    allDots = allDots-repmat(params.screenVar.centerPix', 1, length(allDots));
+
+    Screen('DrawDots', wPtr, allDots, params.dots.sizeInPix, params.dots.color, params.screenVar.centerPix,1);
+    Screen('FillRect', wPtr, [0 0 0 255], params.screenVar.rectPix);
+
+    Screen('FillOval', wPtr, [0 0 0 0], [0 0 params.stim.radiusPix params.stim.radiusPix]);
+    if params.oval.present, Screen('FillOval', wPtr, params.oval.color, params.oval.rectPix); end;
+    if params.oval.fixation, fixation(wPtr); end; 
+
+    Screen('DrawingFinished',wPtr,0);
+    Screen('Flip', wPtr,0,0); 
+end 
+Screen('Flip', wPtr,0,0);
+
+
+

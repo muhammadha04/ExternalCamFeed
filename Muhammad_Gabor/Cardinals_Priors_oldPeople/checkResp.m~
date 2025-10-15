@@ -1,0 +1,14 @@
+function correctTrial = checkResp(resp, targetAngle)
+global params;
+
+angleIdx = find(targetAngle == params.stim.possibleAngels);
+up_downCorrect = params.stim.up_down(angleIdx);
+
+respIdx = find(resp.key == params.responseVar.allowedRespKeysCodes); 
+up_downAns = params.
+
+if angleIdx == respIdx
+    correctTrial = 1;
+else
+    correctTrial = 0;  
+end
