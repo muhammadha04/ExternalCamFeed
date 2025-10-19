@@ -386,7 +386,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1386475470464524075, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
       propertyPath: rayVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1386475470464524075, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
       propertyPath: registerOnEnable
@@ -394,7 +394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1386475470464524075, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
       propertyPath: raycastPointerVisible
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2629838883024019021, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
       propertyPath: m_LocalPosition.x

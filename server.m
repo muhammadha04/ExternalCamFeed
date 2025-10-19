@@ -384,7 +384,7 @@ function startUnityStreaming()
     
     % Camera setup - VERIFIED 60FPS CONFIGURATION
     imaqreset;
-    vid = videoinput('winvideo', 1, 'MJPG_960x540');
+    vid = videoinput('winvideo', 1, 'ARGB32_960x540');
     src = getselectedsource(vid);
     
     % Set to your camera's 60fps mode
