@@ -440,6 +440,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NeonXR
       objectReference: {fileID: 0}
+    - target: {fileID: 2629838883024019022, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6809771076142023692, guid: eeacfa95a4fc551498f6048f6565a766, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -551,7 +555,7 @@ MonoBehaviour:
   enableFrameSkipping: 1
   maxBufferedFrames: 2
   showLatencyInfo: 1
-  sessionName: Matan_001
+  sessionName: Yuval_without
   dataOutputPath: Data
   saveFramesAsJPG: 1
   imageQuality: 85
@@ -636,13 +640,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100381445}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 0.8, z: -7}
   m_LocalScale: {x: 3.54, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

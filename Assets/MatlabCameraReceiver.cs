@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Generic;   
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -29,9 +29,9 @@ public class MatlabCameraReceiver : MonoBehaviour
     [Header("Data Logging")]
     public string sessionName = "Session_001"; // Manual entry for session name
     public string dataOutputPath = "Data"; // Folder to save data
-    public bool saveFramesAsJPG = true; // false for PNG
+    public bool saveFramesAsJPG = true; // false for PNG   
     [Range(1, 100)]
-    public int imageQuality = 85; // JPEG quality (1-100)
+    public int imageQuality = 100; // JPEG quality (1-100)
     public GazeDataProvider gazeDataProvider; // Assign PupilLabs Gaze Data Provider
 
     // Private variables

@@ -1,3 +1,4 @@
+%% 
 function sendFilteredRGBCameraFeedToUnity()
     % 60fps RGB Camera with Orientation Filters to Unity
     % OPTIMIZED FOR LOW LATENCY - Enhanced with parameter selection window first!
@@ -19,9 +20,9 @@ function proceed = openParameterSelectionWindow()
         'Color', [0.94, 0.94, 0.94]);
     
     % Initialize parameters with defaults
-    params = struct('sigma', 25*(pi/180), 'filter_type', 2, 'enable_butterworth', 0, ...
+    params = struct('sigma', 25*(pi/180), 'filter_type', 1, 'enable_butterworth', 0, ...
                     'center_sf', 1, 'sf_low', 2/3, 'sf_high', 4, 'butterworth_order', 2, ...
-                    'horizontal_angle', 0, 'vertical_angle', 90, 'oblique_angle', 45, ...
+                    'horizontal_angle', 0, 'vertical_angle', 0, 'oblique_angle', 45, ...
                     'serverIP', '127.0.0.1', 'serverPort', 8052, 'showPreview', false, ...
                     'dropOldFrames', true, 'maxBufferFrames', 1);
     
@@ -187,9 +188,9 @@ function proceed = openParameterSelectionWindow()
     
     % Vertical Angle
     control_height = control_height - 30;
-    uicontrol(paramFig, 'Style', 'text', 'String', 'Vertical:', ...
-        'Position', [30, control_height, 80, 20], 'HorizontalAlignment', 'left', ...
-        'BackgroundColor', [0.94, 0.94, 0.94]);
+    uicontrol(paramFig, 'Style', 'text', 'String', 'Vertical (0=dim vertical bars):', ...
+        'Position', [30, control_height, 220, 20], 'HorizontalAlignment', 'left', ...
+        'FontSize', 9, 'BackgroundColor', [0.94, 0.94, 0.94]);
     
     v_angle_text = uicontrol(paramFig, 'Style', 'text', ...
         'Position', [320, control_height, 60, 20], ...
@@ -202,9 +203,9 @@ function proceed = openParameterSelectionWindow()
     
     % Oblique Angle
     control_height = control_height - 30;
-    uicontrol(paramFig, 'Style', 'text', 'String', 'Oblique:', ...
-        'Position', [30, control_height, 80, 20], 'HorizontalAlignment', 'left', ...
-        'BackgroundColor', [0.94, 0.94, 0.94]);
+    uicontrol(paramFig, 'Style', 'text', 'String', 'Oblique (fixed FFT 135° axis; σ=width):', ...
+        'Position', [30, control_height, 280, 20], 'HorizontalAlignment', 'left', ...
+        'FontSize', 9, 'BackgroundColor', [0.94, 0.94, 0.94]);
     
     o_angle_text = uicontrol(paramFig, 'Style', 'text', ...
         'Position', [320, control_height, 60, 20], ...
@@ -384,7 +385,7 @@ function startUnityStreaming()
     
     % Camera setup - VERIFIED 60FPS CONFIGURATION
     imaqreset;
-    vid = videoinput('winvideo', 1, 'ARGB32_960x540');
+    vid = videoinput('winvideo', 1, 'MJPG_640x480');
     src = getselectedsource(vid);
     
     % Set to your camera's 60fps mode
@@ -393,8 +394,8 @@ function startUnityStreaming()
     
     % Image dimensions (fixed for this configuration)
     
-    width = 960;
-    height = 540;
+    width = 640;
+    height = 480;
     channels = 3;
     
     fprintf('Camera: %s\nResolution: %dx%d\nChannels: %d\n', ...
@@ -574,19 +575,33 @@ end
     
     % Update filter based on selected parameters
     function updateFilter()
-    if params.filter_type == 1
-        % Horizontal filter - removes horizontal orientations (keeps vertical)
-        angle_rad = params.horizontal_angle * (pi/180);
-        H_orientation = exp(-(cos(theta - angle_rad).^2) / (2 * params.sigma^2));
-    elseif params.filter_type == 2
-        % Vertical filter - removes vertical orientations (keeps horizontal)
-        angle_rad = params.vertical_angle * (pi/180);
-        H_orientation = exp(-(cos(theta - angle_rad).^2) / (2 * params.sigma^2));  % Changed from sin to cos
-    else
-        % Oblique filter
-        angle_rad = params.oblique_angle * (pi/180);
-        H_orientation = exp(-(cos(2*(theta - angle_rad)).^2) / (2 * params.sigma^2));
-    end
+        % Horizontal/vertical: cos^4 notch. Oblique: angular distance to 135° line + narrow (1-exp) notch.
+        notch_floor = single(0.12);
+        ic = floor(height/2) + 1;
+        jc = floor(width/2) + 1;
+        
+        if params.filter_type == 3
+            alpha = single(45 * (pi/180));
+            d = theta - alpha;
+            d = atan2(sin(d), cos(d));
+            d_line = abs(d);
+            d_line = min(d_line, single(pi) - d_line);
+            sigma_eff = max(params.sigma * single(0.4), single(4 * pi / 180));
+            k = exp(-((d_line ./ sigma_eff).^4));
+            H_orientation = notch_floor + (1 - notch_floor) .* (1 - k);
+        else
+            if params.filter_type == 1
+                image_line_deg = params.horizontal_angle;
+            else
+                image_line_deg = mod(90 - params.vertical_angle, 180);
+            end
+            angle_freq_deg = mod(image_line_deg + 90, 180);
+            angle_rad_freq = single(angle_freq_deg * (pi/180));
+            c = cos(theta - angle_rad_freq);
+            gauss = exp(-(c.^4) / (2 * params.sigma^2));
+            H_orientation = notch_floor + (1 - notch_floor) * gauss;
+        end
+        H_orientation(ic, jc) = 1;
         
         if params.enable_butterworth
             U_cpd = U / (width/30);  % Assuming 30 deg FOV
@@ -594,6 +609,7 @@ end
             sf = sqrt(U_cpd.^2 + V_cpd.^2);
             sf_filter = 1 ./ (1 + ((sf - params.center_sf) ./ ((params.sf_high - params.sf_low)/2)).^(2*params.butterworth_order));
             H_orientation = H_orientation .* sf_filter;
+            H_orientation(ic, jc) = 1;
         end
     end
     
